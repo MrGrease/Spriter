@@ -1,0 +1,19 @@
+{
+  "name": "spriter",
+  "version": "1.0.0",
+  "description": "Sprite finder!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrGrease/Spriter.git"
+  },
+  "author": "Emre Yorulmaz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MrGrease/Spriter/issues"
+  },
+  "homepage": "https://github.com/MrGrease/Spriter#readme"
+}
