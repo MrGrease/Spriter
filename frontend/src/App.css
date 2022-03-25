@@ -36,3 +36,19 @@
     transform: rotate(360deg);
   }
 }
+
+.Main-Logo{
+  padding-top: 5rem;
+}
+
+.Main-Logo-Header
+{
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: 700;
+}
+
+.Search-Bar
+{
+  padding-top: 3rem;
+  padding-bottom: 2rem;
+}

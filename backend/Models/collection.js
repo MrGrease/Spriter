@@ -9,4 +9,4 @@ const schema = new mongoose.Schema({
 
 const collection = mongoose.model('Collection',schema);
 
-export default {collection}
+export default collection;
