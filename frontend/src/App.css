@@ -52,3 +52,10 @@
   padding-top: 3rem;
   padding-bottom: 2rem;
 }
+
+.Footer{
+  position: fixed;
+  left:0;
+  bottom:0;
+  right:0;
+}
