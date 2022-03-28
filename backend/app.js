@@ -6,45 +6,94 @@ require("dotenv").config();
 const app = express();
 mongoose.connect('mongodb://localhost:27017/SpriterDB');
 const apiKey = process.env.APIKEY;
+const pageCount = process.env.PAGECOUNT;
 
-app.route("/Images").get(
+//get without category
+app.route("/Images/:page").get(
     function(req,res)
     {
-        image.find({},function(err,images)
+        console.log("getting images from page "+req.params.page)
+        var page = req.params.page;
+        
+        fetchImagesFromDb(page,function(result)
         {
-            if(images.length==0)
-            {
-                console.log("DB is empty seeding with google data!");
-
-                axios.get('https://pixabay.com/api/?key='+apiKey)
-                .then(function (response) {
-                    // handle success
-                    console.log("Fetch Success!");
-                    console.log(response.data.hits.length);
-
-                    response.data.hits.forEach(element => { 
-                        var imageURL = element.pageURL;
-                        image.findOneAndUpdate({link:imageURL},{link:imageURL},{ upsert: true }).then(function(){console.log("upsert complete")});
-                    });
-                  })
-                .catch(function (error) {
-                    // handle error
-                    console.log("Fetch failed!");
-                })
-                .then(function () {
-                    console.log("Seed attempt complete");
-                });
-            }
-            else{
-                console.log("db already populated");
-            }
+            console.log(result);
+            res.send(result);
         })
-        res.send("hello");
-
-
     }
 )
 
+//get with category
 app.listen(3000,function(){
+    populateDB(1);
     console.log("Server started on port 3000");
   });
+
+function populateDB(page)
+{    
+    return populatePromise = new Promise(function(success,failed){
+        var skip = (page-1)*pageCount;
+        console.log("populating page "+page);
+        image.find({}).skip(skip).limit(pageCount).exec().then(            
+            function(images)
+        {
+       if(images.length==0)
+       {
+           console.log("DB is empty seeding with google data!");
+            axios.get('https://pixabay.com/api/?key='+apiKey+"&page="+page)
+           .then(function (response) {
+               // handle success
+               console.log("Fetch Success!");
+               console.log("Images found: "+response.data.hits.length);
+                response.data.hits.forEach(element => { 
+                   var imageURL = element.pageURL;
+                   image.findOneAndUpdate({link:imageURL},{link:imageURL},{ upsert: true }).then(function(){console.log("upsert complete")}).catch(function(error)
+                   {
+                       console.log("db error!" + error);
+                   });
+               });
+               success();
+             })
+           .catch(function (error) {
+               // handle error
+               console.log("Fetch failed!");
+               failed();
+           })
+           .then(function () {
+               console.log("Seed attempt complete");
+           });
+       }
+       else{
+           console.log("db already populated");
+           success();
+       }
+     })
+    })
+}
+
+function fetchImagesFromDb(pages,callback)
+{
+    if(pages==1)
+    {
+        image.find({}).limit(pageCount).exec().then(function(result){callback(result);});
+    }
+    else
+    {
+        var skip = (pages-1)*pageCount;
+        image.find({}).skip(skip).limit(pageCount).exec().then(            
+        function(result)
+        {
+            if(result.length==0)
+            {
+                console.log("result is empty calling fetch");
+                populateDB(pages).then(function(){
+                    fetchImagesFromDb(pages,callback);
+                },function(result){callback(result);}); 
+            }
+            else
+            {
+                callback(result);
+            }
+        });
+    }
+}
