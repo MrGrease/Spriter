@@ -1,6 +1,5 @@
-import collection from './collection';
-import image from './image'
-
+const image = require("./image")
+const collection = require("./collection")
 const schema = new mongoose.schema({
     name:'string',
     email:'string',
@@ -10,5 +9,3 @@ const schema = new mongoose.schema({
 });
 
 const user = mongoose.model('User',schema);
-
-export default user;

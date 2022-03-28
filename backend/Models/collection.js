@@ -1,5 +1,5 @@
-import image from './image.js'
-
+const image = require("./image")
+const mongoose = require("mongoose");
 const { default: mongoose } = require("mongoose");
 
 const schema = new mongoose.Schema({
@@ -8,5 +8,3 @@ const schema = new mongoose.Schema({
 });
 
 const collection = mongoose.model('Collection',schema);
-
-export default collection;
