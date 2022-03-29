@@ -47,8 +47,8 @@ function populateDB(page)
                console.log("Fetch Success!");
                console.log("Images found: "+response.data.hits.length);
                 response.data.hits.forEach(element => { 
-                   var imageURL = element.pageURL;
-                   image.findOneAndUpdate({link:imageURL},{link:imageURL},{ upsert: true }).then(function(){console.log("upsert complete")}).catch(function(error)
+                   var webformatURL = element.webformatURL;
+                   image.findOneAndUpdate({link:webformatURL},{link:webformatURL},{ upsert: true }).then(function(){console.log("upsert complete")}).catch(function(error)
                    {
                        console.log("db error!" + error);
                    });
