@@ -18,6 +18,7 @@ app.route("/Images/:page").get(
         fetchImagesFromDb(page,function(result)
         {
             console.log(result);
+            res.set('Access-Control-Allow-Origin', '*');
             res.send(result);
         })
     }
