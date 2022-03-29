@@ -6,17 +6,16 @@ class ImageCell extends React.Component
     ratingChanged()
     {
         console.log("RATING CHANGE MAKE API CALL")
+        //console.log(process.env.REACT_APP_APIURL)
     }
 
     render()
     {
         return(
-            <Container>
-            <Row>
-              <Col>
                 <Card style={{ width: '18rem' }}>
-                <Card.Img variant="top" src="./logo192.png" />
+                <Card.Img variant="top" src={this.link} className="Item-img"/>
                 <Card.Body>
+                <h1></h1>
                 <Row>
                 <Col>
                     <ReactStars
@@ -32,9 +31,6 @@ class ImageCell extends React.Component
                 </Row>
                 </Card.Body>
             </Card>
-            </Col>
-            </Row>
-            </Container>
            
               
             )
@@ -43,7 +39,11 @@ class ImageCell extends React.Component
     {
         super(props);
         this.link = props.link;
+        if(props.rating)
+        {
         this.rating = props.rating;
+        }else
+        {this.rating =0;}
     }
 }
 

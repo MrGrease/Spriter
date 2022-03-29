@@ -59,3 +59,14 @@
   bottom:0;
   right:0;
 }
+
+.card{
+  margin: auto ;
+}
+
+.Item-img {
+  display:flex;
+  align-items:space-between;
+  justify-content:space-between;
+  flex-wrap:wrap;
+}
