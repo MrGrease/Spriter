@@ -14,19 +14,17 @@ class InfiniteScroller extends React.Component
         {
         items:[],
         page:1,
-        hasMore:true
+        hasMore:true,
+        searchTerm:props.term
       };
 
       this.fetchData = this.fetchData.bind(this);
-      
     }
 
     async fetchData(){
         fetch(process.env.REACT_APP_APIURL+this.state.page, { mode: 'cors' }).then(res=>res.json())
         .then((result)=>
         {
-          console.log("results "+this.state.page);
-          console.log(result);
           this.setState(
             {
               items:this.state.items.concat(result),
@@ -36,7 +34,6 @@ class InfiniteScroller extends React.Component
           console.log(error);
           this.setState({hasMore:false})
         })
-        console.log("page" + this.state.page);
         return {}
     }
 
@@ -45,11 +42,10 @@ class InfiniteScroller extends React.Component
       this.fetchData();
     }
 
-
     render(){
     return(
 <InfiniteScroll
-  dataLength={this.state.items.length} //This is important field to render the next data
+  dataLength={this.state.items.length}
   next={this.fetchData}
   hasMore={this.state.hasMore}
   loader={<h4>Loading...</h4>}

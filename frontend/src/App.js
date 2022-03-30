@@ -7,14 +7,18 @@ import SearchBar from './components/searchbar';
 import ImageCell from './components/imagecell';
 import InfiniteScroller from './components/infinitescroller';
 import Footer from './components/footer';
+import { useState } from 'react';
 function App() {
+
+  const [searchTerm, setSearchTerm] = useState("");
+
   return (
     <div className="App">
       <SNavbar></SNavbar>
       <MainLogo></MainLogo>
-      <SearchBar></SearchBar>
+      <SearchBar search={setSearchTerm}></SearchBar>
       <hr/>
-      <InfiniteScroller/>
+      <InfiniteScroller term={searchTerm} key={searchTerm} />
       <Footer/>
     </div>
   );
