@@ -48,7 +48,8 @@ function populateDB(page)
                console.log("Images found: "+response.data.hits.length);
                 response.data.hits.forEach(element => { 
                    var webformatURL = element.webformatURL;
-                   image.findOneAndUpdate({link:webformatURL},{link:webformatURL},{ upsert: true }).then(function(){console.log("upsert complete")}).catch(function(error)
+                   element.tags = element.tags.split(",");
+                   image.findOneAndUpdate({link:webformatURL},{link:webformatURL,tags:element.tags},{ upsert: true }).then(function(){console.log("upsert complete")}).catch(function(error)
                    {
                        console.log("db error!" + error);
                    });
