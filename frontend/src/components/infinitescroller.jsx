@@ -68,7 +68,7 @@ class InfiniteScroller extends React.Component
           <Row>
           {this.state.items.map((i, index) => (
             <Col key={index} lg="2" md="4" sm="6" xs="12">
-              <ImageCell className="ImageCell" link = {this.state.items[index].link}> - #{index}</ImageCell>
+              <ImageCell className="ImageCell" link = {this.state.items[index].link} thumbNail = {this.state.items[index].thumbNail}> - #{index}</ImageCell>
             </Col>
           ))}
 </Row>

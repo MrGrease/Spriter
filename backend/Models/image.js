@@ -2,6 +2,7 @@ const mongoose = require("mongoose")
 
 const schema = new mongoose.Schema({
     link:String,
+    thumbNail:String,
     rating:{type: Number, min:0,max:100},
     tags:[String]
 });

@@ -5,13 +5,22 @@ const axios = require('axios');
 require("dotenv").config();
 const app = express();
 mongoose.connect('mongodb://localhost:27017/SpriterDB');
+
 const apiKey = process.env.APIKEY;
 const pageCount = process.env.PAGECOUNT;
+const apiKeyParam ="&client_id="+apiKey;
+const pageParam="&page=";
+const per_pageParam="&per_page="+pageCount;
+const queryParam="&query=";
+const ApiURLNoSearch="https://api.unsplash.com/photos?";
+const ApiURLSearch="https://api.unsplash.com/search/photos?";
+
 
 //get without category
 app.route("/Images/:page/").get(
     function(req,res)
     {
+        
         console.log("No Category requested, getting images from page "+req.params.page)
         var page = req.params.page;
         fetchImagesFromDb(function(result)
@@ -44,7 +53,6 @@ app.route("/Images/:category/:page/").get(
     }
 )
 
-
 //get with category
 
 function populateDB(page,category="")
@@ -60,7 +68,12 @@ function populateDB(page,category="")
         if(category !=="")
         {
             console.log("category exists!")
-            condition = {$or:[{tags:{$regex:category,$options:'i'}},{link:{$regex:category,$options:'i'}}]};
+            condition = {tags:{$regex:category,$options:'i'}};
+        }
+        else
+        {
+            console.log("no category!");
+            condition = {tags : {$exists:true, $size:0}};
         }
         image.find(condition).skip(skip).limit(pageCount).exec().then(            
             function(images)
@@ -69,26 +82,50 @@ function populateDB(page,category="")
        {
            console.log("DB is empty seeding with google data!");
 
-            var request = 'https://pixabay.com/api/?key='+apiKey+"&page="+page;
+            var request = "";
             if(category!=="")
             {
                 console.log("appending category");
-                request+="&q="+category;
+                request=ApiURLSearch+apiKeyParam+pageParam+page+per_pageParam+queryParam+category;
+            }
+            else
+            {
+                request=ApiURLNoSearch+apiKeyParam+pageParam+page+per_pageParam;
             }
             console.log("sending request to"+request);
             axios.get(request)
            .then(function (response) {
                // handle success
                console.log("Fetch Success!");
-               console.log("amount of images found: "+response.data.hits.length);
-                response.data.hits.forEach(element => { 
-                   var webformatURL = element.webformatURL;
-                   element.tags = element.tags.split(",");
-                   image.findOneAndUpdate({link:webformatURL},{link:webformatURL,tags:element.tags},{ upsert: true }).then(function(){console.log("upsert complete")}).catch(function(error)
-                   {
-                       console.log("db error!" + error);
-                   });
-               });
+               var iteration;
+               if(category==="")
+               {
+                console.log("amount of images found: "+response.data);
+                iteration=response.data;
+               }
+               else
+               {
+                console.log("amount of images found: "+response.data.total);
+                iteration=response.data.results;
+               }
+               iteration.forEach(element => { 
+                var webformatURL = element.urls.raw;
+                var thumb = element.urls.thumb;
+                element.tags = category;
+                var update = {};
+                if(category !=="")
+                {
+                    update={$set:{link:webformatURL,thumbNail:thumb},$push:{tags:category}};
+                }
+                else
+                {
+                    update={$set:{link:webformatURL,thumbNail:thumb}};
+                }
+                image.findOneAndUpdate({link:webformatURL},update,{ upsert: true }).then(function(){console.log("upsert complete")}).catch(function(error)
+                {
+                    console.log("db error!" + error);
+                });
+            });
                success();
              })
            .catch(function (error) {
