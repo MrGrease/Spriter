@@ -22,7 +22,17 @@ class InfiniteScroller extends React.Component
     }
 
     async fetchData(){
-        fetch(process.env.REACT_APP_APIURL+this.state.page, { mode: 'cors' }).then(res=>res.json())
+
+      var fetchURL="";
+      if(this.state.searchTerm===""){
+      fetchURL = process.env.REACT_APP_APIURL+this.state.page;
+      }else
+      {
+        fetchURL = process.env.REACT_APP_APIURL+this.state.searchTerm+"/"+this.state.page;
+      }
+
+        console.log("fetching"+fetchURL)
+        fetch(fetchURL, { mode: 'cors' }).then(res=>res.json())
         .then((result)=>
         {
           this.setState(
