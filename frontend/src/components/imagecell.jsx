@@ -1,6 +1,14 @@
 import React from 'react';
 import {Card,Button,Container,Row,Col} from 'react-bootstrap'
 import ReactStars from "react-rating-stars-component";
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    useRouteMatch,
+    useParams
+  } from "react-router-dom";
 class ImageCell extends React.Component
 {
     ratingChanged()
@@ -26,7 +34,11 @@ class ImageCell extends React.Component
                     />
                 </Col>
                 <Col>
-                    <Button variant="primary">Get!</Button>
+                    <Button variant="primary">
+                    <Link className='btn' to="/Images/${this.ObjectId}" state={{ link: this.link,id:this.ObjectId,rating:this.rating }}>
+                    Get!
+                    </Link>
+                    </Button>
                 </Col>
                 </Row>
                 </Card.Body>
@@ -38,6 +50,7 @@ class ImageCell extends React.Component
     constructor(props)
     {
         super(props);
+        this.ObjectId = props.Id
         this.link = props.link;
         this.thumbNail = props.thumbNail;
         if(props.rating)

@@ -30,8 +30,6 @@ class InfiniteScroller extends React.Component
       {
         fetchURL = process.env.REACT_APP_APIURL+this.state.searchTerm+"/"+this.state.page;
       }
-
-        console.log("fetching"+fetchURL)
         fetch(fetchURL, { mode: 'cors' }).then(res=>res.json())
         .then((result)=>
         {
@@ -68,7 +66,7 @@ class InfiniteScroller extends React.Component
           <Row>
           {this.state.items.map((i, index) => (
             <Col key={index} lg="2" md="4" sm="6" xs="12">
-              <ImageCell className="ImageCell" link = {this.state.items[index].link} thumbNail = {this.state.items[index].thumbNail}> - #{index}</ImageCell>
+              <ImageCell className="ImageCell" link = {this.state.items[index].link} thumbNail = {this.state.items[index].thumbNail} Id = {this.state.items[index]._id}> - #{index}</ImageCell>
             </Col>
           ))}
 </Row>

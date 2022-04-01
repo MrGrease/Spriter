@@ -70,3 +70,45 @@
   justify-content:space-between;
   flex-wrap:wrap;
 }
+
+.Selected-img
+{
+  width: 30rem;
+  height: 30rem;
+}
+
+.Selected-img-btn
+{
+  margin-bottom: 5rem;
+}
+
+.p24by24
+{
+  width: 24px;
+  height: 24px;
+}
+
+
+.p64by64
+{
+  width: 64px;
+  height: 64px;
+}
+
+
+.p128by128
+{
+  width: 128px;
+  height: 128px;
+}
+
+
+.p256by256
+{
+  width: 256px;
+  height: 256px;
+}
+
+.Image-Btn
+{ 
+}

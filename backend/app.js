@@ -25,7 +25,7 @@ app.route("/Images/:page/").get(
         var page = req.params.page;
         fetchImagesFromDb(function(result)
         {
-            console.log("Fetched result with "+result.length);
+            console.log("Fetched result with "+result);
             res.set('Access-Control-Allow-Origin', '*');
             res.send(result);
         },page,"")
@@ -50,6 +50,17 @@ app.route("/Images/:category/:page/").get(
                 res.send({});
             }
         },page,category)
+    }
+)
+
+app.route("/Image/:id").get(
+    function(req,res){
+        var id = req.params.id;
+        console.log("Getting single image");
+        fetchSingleImageFromDb(function(result){
+            res.send(result);
+            console.log("sending single image "+result);
+        },id);
     }
 )
 
@@ -196,6 +207,20 @@ function fetchImagesFromDb(callback,pages,category="",initial=true)
             }
         });
     }
+}
+
+function fetchSingleImageFromDb(callback,id)
+{
+    image.find({_id:id}).exec().then(function(result){
+        if(result.length!==0)
+        {
+            callback(result);
+        }
+        else
+        {
+            callback({});
+        }
+    });
 }
 
 app.listen(3000,function(){
