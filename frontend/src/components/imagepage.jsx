@@ -3,11 +3,21 @@ import Image from "react-bootstrap/Image";
 import {Container,Row,Col,Form,Button,InputGroup,FormControl} from "react-bootstrap"
 import { saveAs } from 'file-saver'
 import {HiDownload} from "react-icons/hi"
+
 function ImagePage(props)
 {
-    const downloadImage = (url,width=0,height=0) => {
-        console.log("downloading"+url)
-        saveAs(url, 'image.jpg') // Put your image url here.
+    const downloadImage = (imageURL,width=0,height=0) => {
+        //call image dl
+
+        if(width === 0 || height === 0)
+        {
+          saveAs(imageURL, 'image.jpg') // Put your image url here.
+        }
+        else
+        {
+            saveAs(imageURL+"&q="+width+"&w="+height)
+        }
+        
       }
   
 
@@ -61,5 +71,8 @@ function ImagePage(props)
     </div>
     )
 }
+
+
+
 
 export default ImagePage;
