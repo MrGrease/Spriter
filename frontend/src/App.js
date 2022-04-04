@@ -7,6 +7,8 @@ import SearchBar from './components/searchbar';
 import ImageCell from './components/imagecell';
 import InfiniteScroller from './components/infinitescroller';
 import Footer from './components/footer';
+import Login from './components/login'
+import Register from './components/register';
 import {
   BrowserRouter as Router,
   Routes,
@@ -29,6 +31,10 @@ function App() {
             <hr/>
             <InfiniteScroller term={searchTerm} key={searchTerm} />
           </>}>
+          </Route>
+          <Route exact path="/login" element={<Login></Login>}>
+          </Route>
+          <Route exact path="/register" element={<Register></Register>}>
           </Route>
           <Route path="/Images/:id" element={ <ImagePage></ImagePage>}>
           </Route>

@@ -9,6 +9,7 @@ import {
     useRouteMatch,
     useParams
   } from "react-router-dom";
+import { BsSuitHeart,BsSuitHeartFill } from 'react-icons/bs';
 class ImageCell extends React.Component
 {
     ratingChanged()
@@ -25,20 +26,16 @@ class ImageCell extends React.Component
                 <Card.Body>
                 <h1></h1>
                 <Row>
-                <Col>
-                    <ReactStars
-                        count={5}
-                        onChange={this.ratingChanged}
-                        size={24}
-                        activeColor="#ffd700"
-                    />
-                </Col>
+
                 <Col>
                     <Button variant="primary">
                     <Link className='btn' to="/Images/${this.ObjectId}" state={{ link: this.link,id:this.ObjectId,rating:this.rating }}>
                     Get!
                     </Link>
                     </Button>
+                </Col>
+                <Col>
+                <Button variant="outline-primary"><BsSuitHeart></BsSuitHeart></Button>
                 </Col>
                 </Row>
                 </Card.Body>
