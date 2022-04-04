@@ -1,11 +1,12 @@
-const image = require("./image")
+const {image,imageschema} = require("./image")
 const collection = require("./collection")
-const schema = new mongoose.schema({
+const mongoose = require("mongoose")
+const schema = new mongoose.Schema({
     name:'string',
     email:'string',
     password:'string',
     collections:[collection],
-    favourites:[image]
+    favourites:[imageschema]
 });
 
 const user = mongoose.model('User',schema);

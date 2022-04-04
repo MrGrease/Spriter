@@ -1,10 +1,9 @@
-const image = require("./image")
+const {image,imageschema} = require("./image")
 const mongoose = require("mongoose");
-const { default: mongoose } = require("mongoose");
 
 const schema = new mongoose.Schema({
     name:'string',
-    images:[image]
+    images:[imageschema]
 });
 
 const collection = mongoose.model('Collection',schema);

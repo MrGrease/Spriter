@@ -1,10 +1,11 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const image = require("./Models/image")
+const user = require("./Models/user")
 const axios = require('axios');
 require("dotenv").config();
 const app = express();
 mongoose.connect('mongodb://localhost:27017/SpriterDB');
+const {image,imageschema} = require("./Models/image")
 
 const apiKey = process.env.APIKEY;
 const pageCount = process.env.PAGECOUNT;
