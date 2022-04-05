@@ -1,11 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const user = require("./Models/user")
+const User = require("./Models/user")
 const axios = require('axios');
 require("dotenv").config();
 const app = express();
 mongoose.connect('mongodb://localhost:27017/SpriterDB');
-const {image,imageschema} = require("./Models/image")
+const {image} = require("./Models/image")
+var bodyParser = require('body-parser')
+
+app.use(express.urlencoded({ extended: false }))
 
 const apiKey = process.env.APIKEY;
 const pageCount = process.env.PAGECOUNT;
@@ -15,6 +18,7 @@ const per_pageParam="&per_page="+pageCount;
 const queryParam="&query=";
 const ApiURLNoSearch="https://api.unsplash.com/photos?";
 const ApiURLSearch="https://api.unsplash.com/search/photos?";
+
 
 
 //get without category
@@ -62,6 +66,63 @@ app.route("/Image/:id").get(
             res.send(result);
             console.log("sending single image "+result);
         },id);
+    }
+)
+
+app.route("/login").post(
+    function(req,res){
+        const { email, password } = req.body;
+
+        // Check if email and password is provided
+        if (!email || !password) {
+          res.send(new ErrorResponse("Please provide an email and password", 400));
+        }
+    
+        try {
+            // Check that user exists by email
+            const user = User.findOne({ email }).select("+password").exec(
+              function(user)
+              {
+                if (!user) 
+                {
+                    res.send(new ErrorResponse("Invalid credentials", 401));
+                }
+
+                // Check that password match
+                user.matchPassword(password).then(function(isMatch)
+                {
+                    if (!isMatch) {
+                        res.send(new ErrorResponse("Invalid credentials", 401));
+                    }
+                    else
+                    {
+                        sendToken(user, 200, res);
+                    }
+                });
+              }
+          );
+          
+        } catch (err) {
+          res.send(err);
+        }
+    }
+)
+
+app.route("/register").post(
+    function(req,res)
+    {
+        const { email, password } = req.body;
+        const user = new User({email:email,password:password});
+        user.save().then((user) => {
+            sendToken(user, 200, res);
+        })
+        .catch((error) => {
+            //When there are errors We handle them here
+            console.log(error);
+            res.status(400).send("bad request");
+    
+        });
+
     }
 )
 
@@ -228,3 +289,8 @@ app.listen(3000,function(){
     populateDB(1);
     console.log("Server started on port 3000");
   });
+
+const sendToken = (user, statusCode, res) => {
+   const token = user.getSignedJwtToken();
+   res.status(statusCode).json({ sucess: true, token });
+};
