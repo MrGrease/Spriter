@@ -133,7 +133,7 @@ app.route("/favourite/:id").post(protect,
                                   ).exec().then(function()
                                   {
                                       console.log("fav removed")
-                                    res.sendStatus(200);
+                                    res.sendStatus(202);
                                   });
                             }
                             else
@@ -142,7 +142,7 @@ app.route("/favourite/:id").post(protect,
                                 update={$push:{favourites:image}};
 
                                 User.findOneAndUpdate({email:req.user.email},update).exec().then(function(){
-                                    res.sendStatus(200);
+                                    res.sendStatus(201);
                                     console.log("inserted fav")}).catch(function(error)
                                 {
                                     console.log("db error!" + error);

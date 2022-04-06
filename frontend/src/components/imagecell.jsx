@@ -11,9 +11,11 @@ import {
   } from "react-router-dom";
 import axios from "axios";
 import { BsSuitHeart,BsSuitHeartFill } from 'react-icons/bs';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 class ImageCell extends React.Component
 {
+  
     ratingChanged()
     {
         console.log("RATING CHANGE MAKE API CALL")
@@ -22,21 +24,25 @@ class ImageCell extends React.Component
     
     favourite()
     {      
-       console.log("sending token " +localStorage.getItem("authToken")) 
         const config = {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
               Authorization: `Bearer ${localStorage.getItem("authToken")}`,
             },
           };
-          console.log("sending "+config.headers.Authorization);
         try {
               axios.post(
                   process.env.REACT_APP_API+"favourite/"+this.ObjectId,{Id: this.ObjectId,cool:"lime"},
                 config
               ).then(function(data)
               {
-
+                if(data.status == 201)
+                {
+                  toast("Added to favourites!");
+                }else
+                {
+                  toast("Removed from favourites!!");
+                }
               });
             } catch (error) {
               console.log(error);
@@ -49,6 +55,7 @@ class ImageCell extends React.Component
                 <Card style={{ width: '18rem' }}>
                 <Card.Img variant="top" src={this.thumbNail} className="Item-img"/>
                 <Card.Body>
+                <ToastContainer />
                 <h1></h1>
                 <Row>
 
@@ -75,6 +82,7 @@ class ImageCell extends React.Component
         this.ObjectId = props.Id
         this.link = props.link;
         this.thumbNail = props.thumbNail;
+        this.refresher = props.refresher;
         if(props.rating)
         {
         this.rating = props.rating;

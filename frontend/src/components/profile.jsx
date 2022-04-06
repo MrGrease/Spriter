@@ -41,7 +41,7 @@ function Profile({history})
         <Row>
       {favourites.items.map((i, index) => (
         <Col key={index} lg="2" md="4" sm="6" xs="12">
-          <ImageCell className="ImageCell" link = {favourites.items[index].link} thumbNail = {favourites.items[index].thumbNail} Id = {favourites.items[index]._id}> - #{index}</ImageCell>
+          <ImageCell className="ImageCell" link = {favourites.items[index].link} thumbNail = {favourites.items[index].thumbNail} Id = {favourites.items[index]._id} refresher={true}> - #{index}</ImageCell>
         </Col>
         
       ))}
