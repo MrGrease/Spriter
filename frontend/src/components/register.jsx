@@ -1,30 +1,67 @@
 import { Button,Form,Container,Badge } from "react-bootstrap";
-import { useState } from "react";
+import { useState,useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 function Register()
 {
-
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
     const [confirmPassword,setConfirmPassword] = useState("");
     const [errorPassMessage, setErrorPassMessage] = useState("");
     const [errorEmailMessage, setErrorEmailMessage] = useState("");
-    function handleSubmit(event) 
+    const navigate = useNavigate();
+
+    useEffect(() =>{
+        if(localStorage.getItem("authToken"))
+        {
+            navigate("/profile")
+        }
+      },navigate)
+
+
+    const handleSubmit = async (event) => 
     {
         event.preventDefault();
+        setErrorPassMessage("");
+        setErrorEmailMessage("");
+
+
+        const config = {
+            header: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+          };
+
+
         if(password===confirmPassword)
         {
-            console.log("valid");
+
+            try {
+                const { data } = await axios.post(
+                    process.env.REACT_APP_API+"register",
+                  {
+                    email,
+                    password
+                  },
+                  config
+                );
+          
+                localStorage.setItem("authToken", data.token);
+          
+                navigate("/profile")
+              } catch (error) {
+                setErrorEmailMessage("Username or password is in use");
+                renderEmailErrorMessage("Username or password is in use");
+                setTimeout(() => {
+                  setErrorEmailMessage("");
+                }, 5000);
+              }
         }else
         {
             console.log("invalid")
             setErrorPassMessage("Passwords do not match");
         }
-
-        if(true)
-        {
-            setErrorEmailMessage("Email in use");
-        }
-        
     }
 
     function handleChange(event)

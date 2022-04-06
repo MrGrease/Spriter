@@ -26,7 +26,7 @@ function ImagePage(props)
     return(
         <div >
 
-       <h1>IMAGE PAGE {JSON.stringify(location.state)}</h1>
+       <h1>IMAGE PAGE</h1>
        <Row className="justify-content-md-center">
        <Col lg="3" md="6" sm="6" xs="12" >
             <h2>Raw Image</h2>

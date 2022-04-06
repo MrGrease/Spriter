@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-
+mongoose.models = {}
 const imageschema = new mongoose.Schema({
     link:String,
     thumbNail:String,

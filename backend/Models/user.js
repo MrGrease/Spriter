@@ -1,9 +1,9 @@
 const {image,imageschema} = require("./image")
-const collection = require("./collection")
 const mongoose = require("mongoose")
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const schema = new mongoose.Schema({
+
+const UserSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, "Please provide email address"],
@@ -22,7 +22,7 @@ const schema = new mongoose.Schema({
     favourites:[imageschema]
 });
 
-schema.pre("save", async function (next) {
+UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     next();
   }
@@ -32,16 +32,16 @@ schema.pre("save", async function (next) {
   next();
 });
 
-schema.methods.matchPassword = async function (password) {
+UserSchema.methods.matchPassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
-schema.methods.getSignedJwtToken = function () {
+UserSchema.methods.getSignedJwtToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE,
   });
 };
 
-const User = mongoose.model('User',schema);
+const User = mongoose.model('User',UserSchema);
 
 module.exports = User;

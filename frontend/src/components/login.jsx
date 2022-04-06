@@ -1,5 +1,7 @@
 import { Button,Form,Container,Badge } from "react-bootstrap";
-import { useState } from "react";
+import { useState,useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 function Login()
 {
 
@@ -7,11 +9,49 @@ function Login()
     const [password,setPassword] = useState("");
     const [errorPassMessage, setErrorPassMessage] = useState("");
     const [errorEmailMessage, setErrorEmailMessage] = useState("");
-    function handleSubmit(event) 
-    {
-        event.preventDefault();
-        
-    }
+    const navigate = useNavigate();
+    useEffect(() =>{
+      if(localStorage.getItem("authToken"))
+      {
+          navigate("/profile")
+      }
+    },navigate)
+
+  const handleSubmit = async (event) => 
+  {
+      event.preventDefault();
+      setErrorPassMessage("");
+      setErrorEmailMessage("");
+      const config = {
+          header: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+        };
+
+
+          try {
+            console.log(process.env.REACT_APP_API_LOGIN + email+password)
+              const { data } = await axios.post(
+                  process.env.REACT_APP_API_LOGIN,
+                {
+                  email,
+                  password
+                },
+                config
+              );
+                
+              localStorage.setItem("authToken", data.token);
+              console.log("logged in");
+              navigate("/profile")
+            } catch (error) {
+              console.log(error);
+              setErrorEmailMessage("Username or password is wrong");
+              renderEmailErrorMessage("Username or password is wrong");
+              setTimeout(() => {
+                setErrorEmailMessage("");
+              }, 5000);
+            }
+  }
 
     function handleChange(event)
     {

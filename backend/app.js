@@ -5,10 +5,15 @@ const axios = require('axios');
 require("dotenv").config();
 const app = express();
 mongoose.connect('mongodb://localhost:27017/SpriterDB');
-const {image} = require("./Models/image")
+const {image,imageschema} = require("./Models/image")
 var bodyParser = require('body-parser')
+const cors = require('cors');
+const {protect} = require("./middleware/auth")
+var ObjectId = require('mongodb').ObjectID;
 
-app.use(express.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json());
+app.use(cors());
 
 const apiKey = process.env.APIKEY;
 const pageCount = process.env.PAGECOUNT;
@@ -69,38 +74,129 @@ app.route("/Image/:id").get(
     }
 )
 
+app.route("/profile").get(protect,
+    function(req,res)
+    {
+        User.findOne({email:req.user.email}).select("+password").exec().then(
+            function(user)
+            {
+                if (!user) 
+                {
+                    res.sendStatus(401);
+                    console.log("no user found ")
+                    return;
+                }
+                else
+                {
+                    console.log(user.favourites.length);
+
+                    res.send(user.favourites)
+                }
+            }
+        )
+        
+    }
+)
+
+app.route("/favourite/:id").post(protect,
+    function(req,res)
+    {        
+        var id = req.params.id;
+        image.findById(id).exec().then(
+            function(image)
+            {
+                if (!image) 
+                {
+                    res.sendStatus(401);
+                    console.log("no image found ")
+                    return;
+                }
+                else
+                {
+                    console.log(image);
+                    const objectid = ObjectId(id);
+                    User.findOne({
+                        email:req.user.email,
+                        "favourites._id": objectid
+                      }).exec().then(
+                          function(result)
+                          {
+                              console.log("*******************************result****************************** "+(result))
+                              console.log("Result "+result);
+                              console.log("Request "+req.user.email);
+                            if(result)
+                            {
+                                console.log("user found with fav");
+                                User.findOneAndUpdate(
+                                    {email:req.user.email},
+                                    { $pull: { favourites: { _id:id } } }
+                                  ).exec().then(function()
+                                  {
+                                      console.log("fav removed")
+                                    res.sendStatus(200);
+                                  });
+                            }
+                            else
+                            {
+                                console.log("user not found with fav inserting fav")
+                                update={$push:{favourites:image}};
+
+                                User.findOneAndUpdate({email:req.user.email},update).exec().then(function(){
+                                    res.sendStatus(200);
+                                    console.log("inserted fav")}).catch(function(error)
+                                {
+                                    console.log("db error!" + error);
+                                });
+                            }
+                          }
+                      )
+                }
+            }
+        )
+    }
+)
+
 app.route("/login").post(
     function(req,res){
         const { email, password } = req.body;
-
+        console.log("login requested" +email);
         // Check if email and password is provided
         if (!email || !password) {
-          res.send(new ErrorResponse("Please provide an email and password", 400));
+            console.log("no username or password")
+          res.sendStatus(400);
+          return;
         }
     
         try {
             // Check that user exists by email
-            const user = User.findOne({ email }).select("+password").exec(
-              function(user)
-              {
-                if (!user) 
+            console.log("looking for user by email "+email)
+            User.findOne({email:email}).select("+password").exec().then(
+                function(user)
                 {
-                    res.send(new ErrorResponse("Invalid credentials", 401));
+                  if (!user) 
+                  {
+                      res.sendStatus(401);
+                      console.log("no user found "+user)
+                      return;
+                  }
+                  console.log("user found!"+user)
+                  // Check that password match
+                  user.matchPassword(password).then(function(isMatch)
+                  {
+                      if (!isMatch) {
+                          console.log("passwords do not match")
+                          res.sendStatus(401);
+                          return;
+                      }
+                      else
+                      {
+                          console.log("LOGGING IN!")
+                          sendToken(user, 200, res);
+                          return;
+                      }
+                  });
                 }
-
-                // Check that password match
-                user.matchPassword(password).then(function(isMatch)
-                {
-                    if (!isMatch) {
-                        res.send(new ErrorResponse("Invalid credentials", 401));
-                    }
-                    else
-                    {
-                        sendToken(user, 200, res);
-                    }
-                });
-              }
-          );
+            );
           
         } catch (err) {
           res.send(err);

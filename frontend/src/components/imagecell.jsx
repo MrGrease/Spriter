@@ -9,13 +9,38 @@ import {
     useRouteMatch,
     useParams
   } from "react-router-dom";
+import axios from "axios";
 import { BsSuitHeart,BsSuitHeartFill } from 'react-icons/bs';
+
 class ImageCell extends React.Component
 {
     ratingChanged()
     {
         console.log("RATING CHANGE MAKE API CALL")
         //console.log(process.env.REACT_APP_APIURL)
+    }
+    
+    favourite()
+    {      
+       console.log("sending token " +localStorage.getItem("authToken")) 
+        const config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          };
+          console.log("sending "+config.headers.Authorization);
+        try {
+              axios.post(
+                  process.env.REACT_APP_API+"favourite/"+this.ObjectId,{Id: this.ObjectId,cool:"lime"},
+                config
+              ).then(function(data)
+              {
+
+              });
+            } catch (error) {
+              console.log(error);
+            }
     }
 
     render()
@@ -35,7 +60,7 @@ class ImageCell extends React.Component
                     </Button>
                 </Col>
                 <Col>
-                <Button variant="outline-primary"><BsSuitHeart></BsSuitHeart></Button>
+                <Button variant="outline-primary" onClick={this.favourite}><BsSuitHeart></BsSuitHeart></Button>
                 </Col>
                 </Row>
                 </Card.Body>
@@ -55,6 +80,7 @@ class ImageCell extends React.Component
         this.rating = props.rating;
         }else
         {this.rating =0;}
+        this.favourite = this.favourite.bind(this);
     }
 }
 
